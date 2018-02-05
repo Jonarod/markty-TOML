@@ -77,9 +77,9 @@ console.log( marktytoml(someTOML) )
 
 
 ## CONS
-- :baby: Baby stage - EXPLOSIONS MAY HAPPEN :bomb: :bomb: :bomb: #WipPreAlpha
-- [ ] Lack of proper :zap: benchmark :zap: against [big players](https://github.com/toml-lang/toml/wiki)
-- Not TOML v0.4 compliant. For instance, here are UNsupported things:
+- :baby: Baby stage 
+- :bomb: :bomb: :bomb: EXPLOSIONS MAY HAPPEN  #WipPreAlpha
+- Not TOML v0.4 compliant. For instance, here are UNsupported specs:
     - comments: not in the roadmap for now
     - [ ] array of arrays like `stuff = [[1,2], ["a","b"]]` (known bug)
     - [ ] inline tables like `stuff = {"key" : "value"}` (known bug) 
@@ -88,6 +88,7 @@ console.log( marktytoml(someTOML) )
 
 ## PROS
 - :microscope: **Ridiculously SMALL:**: 100 LOC, 800 bytes gzipped
+- :zap: Blazing fast  :zap: see **benchmarks**
 - **Handles basic native data types:**
     - [x] strings
     - [x] integers
@@ -135,10 +136,10 @@ This will correctly parse to :
 |:-----|:-------------|------------:|---------------:|
 | gzipped size |      |   **800 b** |        9.000 b |
 | v0.4 compliant ? |  | :heavy_multiplication_x: | **:heavy_check_mark:** |
-| Parsing tests                                      |
-| [simple_kv][5] | [link][2] | **116,630 ops/s** | 8,134 ops/s |
-| [simple_block][6] | [link][3] | **73,593 ops/s** | 2,838 ops/s |
-| [classic_config][7] | [link][4] | **10,447 ops/s** | 233 ops/s |
+| **Parsing tests:**                                 |
+| [simple_kv][5] | [link to becnh][2] | **116,630 ops/s** | 8,134 ops/s |
+| [simple_block][6] | [link to becnh][3] | **73,593 ops/s** | 2,838 ops/s |
+| [classic_config][7] | [link to becnh][4] | **10,447 ops/s** | 233 ops/s |
 
 
 [1]: https://github.com/BinaryMuse/toml-node
