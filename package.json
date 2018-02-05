@@ -1,7 +1,7 @@
 {
   "name": "markty-toml",
-  "description": "Tiny Markup Creator.",
-  "version": "0.0.3",
+  "description": "Nano TOML parser for Javascript.",
+  "version": "0.0.4",
   "main": "dist/marktytoml.js",
   "module": "dist/marktytoml.es.js",
   "jsnext:main": "dist/marktytoml.es.js",
@@ -24,16 +24,16 @@
     "src",
     "dist"
   ],
-  "homepage": "https://github.com/Jonarod/markty",
+  "homepage": "https://github.com/Jonarod/markty-TOML",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jonarod/markty.git"
+    "url": "git+https://github.com/Jonarod/markty-TOML.git"
   },
   "license": "MIT",
   "keywords": [
-    "markdown",
+    "toml",
     "parser",
-    "rich-text"
+    "javascript"
   ],
   "dependencies": {
     "markty": "0.0.3"
@@ -81,7 +81,7 @@
     }
   },
   "bugs": {
-    "url": "https://github.com/Jonarod/markty/issues"
+    "url": "https://github.com/Jonarod/markty-TOML/issues"
   },
   "directories": {
     "test": "test"
