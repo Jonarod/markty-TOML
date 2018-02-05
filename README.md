@@ -128,3 +128,24 @@ This will correctly parse to :
 }
 ```
 
+
+# Benchmarks
+
+| Test | Observations | markty-TOML | [node-toml][1] |
+|:-----|:-------------|------------:|---------------:|
+| gzipped size |      |   **800 b** |        9.000 b |
+| v0.4 compliant ? |  | :heavy_multiplication_x: | **:heavy_check_mark:** |
+| Parsing tests                                      |
+| [simple_kv][5] | [link][2] | **116,630 ops/s** | 8,134 ops/s |
+| [simple_block][6] | [link][3] | **73,593 ops/s** | 2,838 ops/s |
+| [classic_config][7] | [link][4] | **10,447 ops/s** | 233 ops/s |
+
+
+[1]: https://github.com/BinaryMuse/toml-node
+[2]: https://jsbench.me/96jd9g78vn/2
+[3]: https://jsbench.me/cujd9gya1l/1
+[4]: https://jsbench.me/txjd9h2y7d/2
+[5]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_kv.toml
+[6]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_block.toml
+[7]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/classic_config.toml
+
