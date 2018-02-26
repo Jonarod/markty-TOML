@@ -2,7 +2,7 @@
 import markty from 'markty'
 
 export default function marktytoml (TOML) {
-    let tomlBlocks = '^\\s*\\[(\\[)?\\"?(.*?)\\"?\\]\\]?(?= *$)((?:[\\w\\W](?!^\\s*\\[))*)'
+    let tomlBlocks = '^\\s*\\[(\\[)?(.*?)\\]\\]?(?= *$)((?:[\\w\\W](?!^\\s*\\[))*)'
     let matchThis = new RegExp(`${tomlBlocks}`, 'gm')
     let json = {}
     TOML = TOML[0] === "[" ? TOML : "[]\n"+TOML
@@ -12,12 +12,13 @@ export default function marktytoml (TOML) {
 
         if (header_array){  // header is like [[grand.parent]]
             // @TODO: Should implement array blocks
+            setWithPath(json, header_path, parseBody(body), true)
         }
         else if (header_path === ""){ // header is like []
             json = Object.assign({}, json, parseBody(body))
         }
         else {  // header is like [grand.parent]
-            setWithPath(header_path, parseBody(body), json )
+            setWithPath(json, header_path, parseBody(body), false)
         }
 
     })
@@ -26,26 +27,22 @@ export default function marktytoml (TOML) {
 }
 
 function parseBody (TOML) {
-    let tomlLines = '^ *([^\\s]+) *[=:] *"((?!")[\\w\\W]+?)"|^ *([^\\s]+) *[=:] *\\[((?!\\])[\\w\\W]+?)\\]|^ *([^\\s]+) *[=:] *(.+) *'
-    let tomlHeaders = '^ *\\[(\\[)?\\"?(.*?)\\"?\\]\\]?(?= *$)'
-    let matchThis = new RegExp(`${tomlLines}|${tomlHeaders}|^(.+)$`, 'gm')
+    let matchThis = new RegExp(`^ *(.+?) *[=:] *(?:"((?!")[\\w\\W]+?)"|(\\[[\\w\\W]+?(?:(?: *])+ *$\\n*)+)|(\\{[\\w\\W]+?(?:(?: *})+ *$\\n*)+)|(.+) *)|^(.+)$`, 'gm')
 
     let json = {}
 
     markty(TOML, matchThis, (string, match) => {
         let [token,
-            key_1, val_quotes,
-            key_2, val_array,
-            key_3, val_noquotes,
-            header_double, header,
+            key, 
+            val_quotes, val_array, val_json, val_noquotes,
             trash
         ] = match, k, v
 
-        if (key_1 || key_2 || key_3){
-            k = key_1 || key_2 || key_3
+        if (key){
+            k = key.charAt(0) === "\"" && key.charAt(key.length-1) === "\"" ? key.slice(1, -1) : key
             if (val_quotes) {v = val_quotes }
-            if (val_array) {
-                v = JSON.parse(`[${val_array}]`)
+            if (val_array || val_json) {
+                v = JSON.parse(`${val_array || val_json}`)
             }
             // val_noquotes is important: it is a value NOT surrounded by double-quotes
             if (val_noquotes) {
@@ -57,12 +54,14 @@ function parseBody (TOML) {
                 else if (parseInt(val_noquotes, 16).toString(16) === val_noquotes.toLowerCase() ){ v = parseInt(val_noquotes, 16) }
                 else if (parseInt(val_noquotes, 8).toString(8) === val_noquotes.toLowerCase() ){ v = parseInt(val_noquotes, 8) }
                 else if (parseInt(val_noquotes, 2).toString(2) === val_noquotes.toLowerCase() ){ v = parseInt(val_noquotes, 2) }
+                // else if (dateRegex) {
+                //     /(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?([Z+-])?(?:(\d{1,2}):(\d{2}))?/
+                // }
                 else { v = val_noquotes }
             }        
             json[k] = v
             return ''
         }
-        else if (header) return header_double ? '[["'+header+'"]]'  + '<br />': '["'+header+'"]' + '<br />'
         // If a user puts a value on multiple lines (using line-breaks), WITHOUT using double-quotes
         // everything coming after the line-break is trash
         else if (trash) return ''
@@ -71,28 +70,20 @@ function parseBody (TOML) {
     return json
 }
 
-function setWithPath (pathKey, value, tree) {
-    pathKey = ["."].indexOf(pathKey) === 0 ? pathKey : "." + pathKey // append dot to corrrectly split
-    let keys = pathKey.split('.').slice(1)
-    let currentKey = keys.shift()  // take out first element in array: removes it from the array as well 
-    let nextPath = keys.join('.') // prepare new path for next iteration
-    let found = (currentKey in tree)
-    let keysLeft = keys.length > 0
-    let currentNode = {}
-
-    if (keysLeft){
-        if ( !found ){
-            tree[currentKey] = setWithPath(nextPath, value, currentNode)
-        } else {
-            currentNode = tree[currentKey] 
-            currentNode = (currentNode !== null && typeof currentNode === 'object') ? currentNode : {}
-            tree[currentKey] = setWithPath(nextPath, value, currentNode)
+function setWithPath(obj, keys, val, asArray) { 
+	// asArray = asArray ? true : false
+	keys.split && (keys=keys.split('.'))
+	var i=0, l=keys.length, t=obj, x
+	for (; i < l; ++i) {
+  
+        if (t instanceof Array){x = t[t.length-1]; i--} else { x = t[keys[i]] }
+ 
+        if (i === l-1) {
+          x instanceof Array ? t[keys[i]].push(val) : (t[keys[i]]=asArray?[val]:val)
         }
-        return tree
-    } else {
-        tree[currentKey] = value
-        return tree
-    }
-} 
-
-// export {setWithPath}
+        else {
+            x instanceof Array ? ( t = x ) : (t = t[keys[i]] = (x == null ? {} : x))          
+        }
+        
+	}
+}

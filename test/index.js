@@ -14,11 +14,16 @@ describe('marktyTOML()', () => {
             var output = {"key": "value"}
             expect(marktyTOML(input)).to.deep.equal(output)
         })
-        // it('parses keys with quotes', () => {
-        //     var input = '"key" = value'
-        //     var output = {"key": "value"}
-        //     expect(marktyTOML(input)).to.deep.equal(output)
-        // })
+        it('Allows spaced keys', () => {
+            var input = 'spaced key = value'
+            var output = {"spaced key": "value"}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('parses keys with quotes', () => {
+            var input = '"key" = value'
+            var output = {"key": "value"}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
         it('parses with colon', () => {
             var input = 'key : value'
             var output = {"key": "value"}
@@ -89,21 +94,21 @@ describe('marktyTOML()', () => {
             var output = {"bin": 0b11010110}
             expect(marktyTOML(input)).to.deep.equal(output)
         })
-        // it('parses array of array', () => {
-        //     var input = 'arr-arr = [["a","b"], [1,2]]'
-        //     var output = {"arr-arr" : [["a","b"], [1,2]]}
-        //     expect(marktyTOML(input)).to.deep.equal(output)
-        // })
-        // it('parses object as value', () => {
-        //     var input = 'json = {"key" : "value"}'
-        //     var output = {"json" : {"key" : "value"}}
-        //     expect(marktyTOML(input)).to.deep.equal(output)
-        // })
-        // it('parses date', () => {
-        //     var input = 'a-long-time-ago = 1979-05-27T07:32:00Z'
-        //     var output = {"a-long-time-ago": new Date('1979-05-27T07:32:00Z')}
-        //     expect(marktyTOML(input)).to.deep.equal(output)
-        // })
+        it('parses array of array', () => {
+            var input = 'arr-arr = [["a","b"], [1,2]]'
+            var output = {"arr-arr" : [["a","b"], [1,2]]}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('parses object as value', () => {
+            var input = 'json = {"key" : "value"}'
+            var output = {"json" : {"key" : "value"}}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('parses dates', () => {
+            var input = 'a-long-time-ago = 1979-05-27T07:32:00Z'
+            var output = {"a-long-time-ago": "1979-05-27T07:32:00Z"}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
         it('parses true', () => {
             var input = 'yes = true'
             var output = {"yes": true}
@@ -216,7 +221,136 @@ describe('marktyTOML()', () => {
             expect(marktyTOML(input)).to.deep.equal(output)
         })
     })
-    // describe('Append to Object', () => {
+	describe('Advanced', () => {
+        it('Handles array of tables', () => {
+            var input = `
+            [[products]]
+            name = "Hammer"
+            sku = 738594937
+
+            [[products]]
+            
+            [[products]]
+            name = "Nail"
+            sku = 284758393
+            color = "gray"
+            `
+            var output = {
+                "products": [
+                    { "name": "Hammer", "sku": 738594937 },
+                    { },
+                    { "name": "Nail", "sku": 284758393, "color": "gray" }
+                ]
+            }
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Handles official array of tables examples', () => {
+            var input = `
+            [[fruit]]
+            name = "apple"
+
+            [fruit.physical]
+              color = "red"
+              shape = "round"
+          
+            [[fruit.variety]]
+              name = "red delicious"
+          
+            [[fruit.variety]]
+              name = "granny smith"
+          
+            [[fruit]]
+            name = "banana"
+          
+            [[fruit.variety]]
+              name = "plantain"
+            `
+            var output = {
+                "fruit": [
+                  {
+                    "name": "apple",
+                    "physical": {
+                      "color": "red",
+                      "shape": "round"
+                    },
+                    "variety": [
+                      { "name": "red delicious" },
+                      { "name": "granny smith" }
+                    ]
+                  },
+                  {
+                    "name": "banana",
+                    "variety": [
+                      { "name": "plantain" }
+                    ]
+                  }
+                ]
+            }
+
+            expect(JSON.stringify(marktyTOML(input))).to.deep.equal(JSON.stringify(output))
+        })
+        it('More complete examples 1', () => {
+            var input = `
+            title = "TOML Example"
+
+            [owner]
+            name = "Tom Preston-Werner"
+            organization = "GitHub"
+            bio = "GitHub Cofounder & CEO\n\tLikes \'tater tots\' and beer and backslashes: \\"
+            dob = 1979-05-27T07:32:00Z
+
+            [database]
+            server = "192.168.1.1"
+            ports = [ 8001, 8002, 8003 ]
+            connection_max = 5000
+            connection_min = -2
+            max_temp = 87.1
+            min_temp = -17.76
+            enabled = true
+
+            [servers]
+
+            [servers.alpha]
+            ip = "10.0.0.1"
+            dc = "eqdc10"
+
+            [servers.beta]
+            ip = "10.0.0.2"
+            dc = "eqdc10"
+            `
+            var output = {
+                "title": "TOML Example",
+                "owner": {
+                  "name": "Tom Preston-Werner",
+                  "organization": "GitHub",
+                  "bio": "GitHub Cofounder & CEO\n\tLikes \'tater tots\' and beer and backslashes: \\",
+                  "dob": "1979-05-27T07:32:00Z"
+                },
+                "database": {
+                  "server": "192.168.1.1",
+                  "ports": [8001, 8002, 8003],
+                  "connection_max": 5000,
+                  "connection_min": -2,
+                  "max_temp": 87.1,
+                  "min_temp": -17.76,
+                  "enabled": true
+                },
+                "servers": {
+                  "alpha": {
+                    "ip": "10.0.0.1",
+                    "dc": "eqdc10"
+                  },
+                  "beta": {
+                    "ip": "10.0.0.2",
+                    "dc": "eqdc10"
+                  }
+                }
+            }
+
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+    })
+        // describe('Append to Object', () => {
     //     it('appends in empty', () => {
     //         var pathKey = "hello"
     //         var value = "world"
