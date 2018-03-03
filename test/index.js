@@ -19,6 +19,16 @@ describe('marktyTOML()', () => {
             var output = {"spaced key": "value"}
             expect(marktyTOML(input)).to.deep.equal(output)
         })
+        it('Trim down leading and trailing spaces', () => {
+            var input = '       spaced key      =       value         '
+            var output = {"spaced key": "value"}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Keeps leading and trailing spaces with double-quotes', () => {
+            var input = '"       spaced key     " = "      value         "'
+            var output = {"       spaced key     ": "      value         "}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
         it('parses keys with quotes', () => {
             var input = '"key" = value'
             var output = {"key": "value"}
@@ -190,6 +200,41 @@ describe('marktyTOML()', () => {
         it('Handles blocks', () => {
             var input = 'line1 = I am line 1\nline2 = I am line 2\n[block]\nline3 = I am line 3'
             var output = {"line1": "I am line 1", "line2": "I am line 2", "block":{"line3":"I am line 3"}}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Handles blocks with spaced keys', () => {
+            var input = `
+                line1 = I am line 1
+                line2 = I am line 2
+                
+                [spaced key.spaced sub key]
+                line3 = I am line 3
+                `
+            var output = {"line1": "I am line 1", "line2": "I am line 2", "spaced key":{"spaced sub key":{"line3":"I am line 3"}}}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Trims down leading and trailing spaces', () => {
+            var input = `
+                [    spaced key.spaced sub key    ]
+                line3 = I am line 3
+                `
+            var output = {"spaced key":{"spaced sub key":{"line3":"I am line 3"}}}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Allows dot to be surrounded by spaces too', () => {
+            var input = `
+                [    spaced key  .   spaced sub key    ]
+                line3 = I am line 3
+                `
+            var output = {"spaced key":{"spaced sub key":{"line3":"I am line 3"}}}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Keeps keys as is when surrounded by double quotes', () => {
+            var input = `
+                ["    spaced key  "."   spaced sub key    "]
+                line3 = I am line 3
+                `
+            var output = {"    spaced key  ":{"   spaced sub key    ":{"line3":"I am line 3"}}}
             expect(marktyTOML(input)).to.deep.equal(output)
         })
         it('Handles blocks with indentation', () => {

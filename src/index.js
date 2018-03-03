@@ -12,13 +12,13 @@ export default function marktytoml (TOML) {
 
         if (header_array){  // header is like [[grand.parent]]
             // @TODO: Should implement array blocks
-            setWithPath(json, header_path, parseBody(body), true)
+            setWithPath(json, header_path.trim(), parseBody(body), true)
         }
         else if (header_path === ""){ // header is like []
             json = Object.assign({}, json, parseBody(body))
         }
         else {  // header is like [grand.parent]
-            setWithPath(json, header_path, parseBody(body), false)
+            setWithPath(json, header_path.trim(), parseBody(body), false)
         }
 
     })
@@ -46,6 +46,7 @@ function parseBody (TOML) {
             }
             // val_noquotes is important: it is a value NOT surrounded by double-quotes
             if (val_noquotes) {
+                val_noquotes = val_noquotes.trim()
                 if (+val_noquotes === +val_noquotes){ v = Number(val_noquotes)}
                 else if (val_noquotes === 'true'){ v = true }
                 else if (val_noquotes === 'false'){ v = false }
@@ -70,12 +71,18 @@ function parseBody (TOML) {
     return json
 }
 
+function sanitizeSpaces(str){
+    str = str.trim()
+    str = (str.substr(0,1) === '"' && str.substr(-1) === '"') ? str.slice(1,-1) : str
+    return str
+}
+
 function setWithPath(obj, keys, val, asArray) { 
 	// asArray = asArray ? true : false
-	keys.split && (keys=keys.split('.'))
+    keys.split && (keys=keys.split('.'))
 	var i=0, l=keys.length, t=obj, x
 	for (; i < l; ++i) {
-  
+        keys[i] = sanitizeSpaces(keys[i])
         if (t instanceof Array){x = t[t.length-1]; i--} else { x = t[keys[i]] }
  
         if (i === l-1) {
