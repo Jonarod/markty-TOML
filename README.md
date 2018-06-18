@@ -76,6 +76,7 @@ console.log( marktytoml(someTOML) )
 - :microscope: **Ridiculously SMALL:**: 100 LOC, 800 bytes gzipped
 - :zap: Blazing fast  :zap: see **benchmarks**
 - **Use any of colon or equal sign:** `key : value` works the same as `key = value`
+- **Single-line comments:** `# this = comment`
 - **Single-line text withOUT double-quotes:** `key = single line without double-quotes allowed`
 - **Multi-line text with double-quotes:** `key = "Multilined paragraphs with line breaks like this \n\n\n should be enclosed with double-quotes"`
 - **Basic native data types** (should not be enclosed by double-quotes):
@@ -92,7 +93,7 @@ console.log( marktytoml(someTOML) )
 - **Complex objects objects** as value:
     - [x] array of values like `stuff = ["one", "two", "three"]`
     - [x] array of arrays like `stuff = [[1,2], ["a","b"]]`
-    - [x] inline tables like `stuff = {"key" : "value"}` 
+    - [x] inline tables like `stuff = {"key" : "value"}`
 
 - **Tables:**
     ```
@@ -140,12 +141,10 @@ This will correctly parse to :
 - :baby: Even though a lot of [tests](https://github.com/Jonarod/markty-TOML/tree/master/test/index.js) have been implemented, this project is still at baby stage, and has not been battle tested in production.
 - Not TOML v0.4 compliant **and not meant to be**. For instance, here are UNsupported specs:
     - There is no errors mechanism to print from.
-    - Comments are not handled
     - Handling colons `:` as key/value separator is not allowed in TOML v0.4 (only `=` supported)
     - Handling strings without `"` is not allowed in TOML v0.4 (strings must be enclosed by `"`)
 - `markty-TOML` considers any TOML source like a **database log**:
     - when two identical nodes are set, the last one **REPLACES** the first: TOML sources are treated like a list of updates which AFTER PARSING returns a final state. This clearly goes against official TOML specs which aims to parse a given source as a **final database state**: thus two identical nodes would throw an error for the whole source.
-    - The nature of `markty-TOML` makes comments out of the scope and are unlikely to be implemented (if compulsory, comments can be set as a normal entries anyway...)
 
 
 # Benchmarks
@@ -167,4 +166,3 @@ This will correctly parse to :
 [5]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_kv.toml
 [6]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_block.toml
 [7]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/classic_config.toml
-

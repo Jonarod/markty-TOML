@@ -49,6 +49,11 @@ describe('marktyTOML()', () => {
             var output = {"abc": "baby you and me giiiiiirl"}
             expect(marktyTOML(input)).to.deep.equal(output)
         })
+				it('single line comments', () => {
+						var input = '# This is a comment'
+						var output = {}
+						expect(marktyTOML(input)).to.deep.equal(output)
+				})
     })
     describe('Data types', () => {
         it('parses string with double quotes', () => {
@@ -150,17 +155,17 @@ describe('marktyTOML()', () => {
                 type = "cakes"
                 delicious = true
                 eatWith = ["spoon", "fork", "hands"]
-                
+
                 [cake-1]
                 name = "you don't want to know..."
-                
+
                 [cake-1.ingredients]
                 eggs = 6
                 milk = "0.5L"
-                
+
                 [cake-2]
                 name : "something"
-                
+
                 [cake-2.ingredients]
                 eggs = 6
                 milk = "0.5L"
@@ -179,9 +184,29 @@ describe('marktyTOML()', () => {
                 "eatWith": ["spoon", "fork", "hands"],
                 "type": "cakes"
             }
-              
+
             expect(marktyTOML(input)).to.deep.equal(output)
         })
+
+				it('single line comments', () => {
+						var input = `
+						key1 = val1
+						# This is a comment
+						#This is a comment
+						# [comment]
+						[test]
+						#[comment]
+						key2 = val2
+						# this = comment
+						#this = comment
+						   #this = comment
+						key3 = val3`
+
+						var output = {"key1":"val1", "test":{"key2":"val2", "key3":"val3"}}
+						expect(marktyTOML(input)).to.deep.equal(output)
+				})
+
+
         // it('parses arrays UNquoted strings', () => {
         //     var input = `count : [one, two, three]`
         //     var output = {"count" : ["one", "two", "three"]}
@@ -192,7 +217,7 @@ describe('marktyTOML()', () => {
         it('Handles multiples lines', () => {
             var input = `line1 = I am line 1
                          line2 = I am line 2
-                         
+
                          line3 = I am line 3`
             var output = {"line1": "I am line 1", "line2": "I am line 2", "line3": "I am line 3"}
             expect(marktyTOML(input)).to.deep.equal(output)
@@ -206,7 +231,7 @@ describe('marktyTOML()', () => {
             var input = `
                 line1 = I am line 1
                 line2 = I am line 2
-                
+
                 [spaced key.spaced sub key]
                 line3 = I am line 3
                 `
@@ -244,7 +269,7 @@ describe('marktyTOML()', () => {
 
                 [block1]
                 line3 = I am line 3
-            
+
                 [block2]
                 line4 = I am line 4
                 `
@@ -258,7 +283,7 @@ describe('marktyTOML()', () => {
 
                 [this]
                 line3 = I am line 3
-            
+
                 [this.is.nested]
                 line4 = I am line 4
                 `
@@ -274,7 +299,7 @@ describe('marktyTOML()', () => {
             sku = 738594937
 
             [[products]]
-            
+
             [[products]]
             name = "Nail"
             sku = 284758393
@@ -297,16 +322,16 @@ describe('marktyTOML()', () => {
             [fruit.physical]
               color = "red"
               shape = "round"
-          
+
             [[fruit.variety]]
               name = "red delicious"
-          
+
             [[fruit.variety]]
               name = "granny smith"
-          
+
             [[fruit]]
             name = "banana"
-          
+
             [[fruit.variety]]
               name = "plantain"
             `
@@ -434,4 +459,3 @@ describe('marktyTOML()', () => {
     // })
 
 })
-

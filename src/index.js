@@ -27,20 +27,22 @@ export default function marktytoml (TOML) {
 }
 
 function parseBody (TOML) {
-    let matchThis = new RegExp(`^ *(.+?) *[=:] *(?:"((?!")[\\w\\W]+?)"|(\\[[\\w\\W]+?(?:(?: *])+ *$\\n*)+)|(\\{[\\w\\W]+?(?:(?: *})+ *$\\n*)+)|(.+) *)|^(.+)$`, 'gm')
+
+    let matchThis = new RegExp(`^[ \t]*(.+?) *[=:] *(?:"((?!")[\\w\\W]+?)"|(\\[[\\w\\W]+?(?:(?: *])+ *$\\n*)+)|(\\{[\\w\\W]+?(?:(?: *})+ *$\\n*)+)|(.+) *)|^(.+)$`, 'gm')
 
     let json = {}
 
     markty(TOML, matchThis, (string, match) => {
         let [token,
-            key, 
+            key,
             val_quotes, val_array, val_json, val_noquotes,
             trash
         ] = match, k, v
 
         if (key){
+            if (key.charAt(0) === "#") {return}
             k = key.charAt(0) === "\"" && key.charAt(key.length-1) === "\"" ? key.slice(1, -1) : key
-            if (val_quotes) {v = val_quotes }
+            if (val_quotes) {v = val_quotes}
             if (val_array || val_json) {
                 v = JSON.parse(`${val_array || val_json}`)
             }
@@ -59,7 +61,7 @@ function parseBody (TOML) {
                 //     /(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?([Z+-])?(?:(\d{1,2}):(\d{2}))?/
                 // }
                 else { v = val_noquotes }
-            }        
+            }
             json[k] = v
             return ''
         }
@@ -77,20 +79,20 @@ function sanitizeSpaces(str){
     return str
 }
 
-function setWithPath(obj, keys, val, asArray) { 
+function setWithPath(obj, keys, val, asArray) {
 	// asArray = asArray ? true : false
     keys.split && (keys=keys.split('.'))
 	var i=0, l=keys.length, t=obj, x
 	for (; i < l; ++i) {
         keys[i] = sanitizeSpaces(keys[i])
         if (t instanceof Array){x = t[t.length-1]; i--} else { x = t[keys[i]] }
- 
+
         if (i === l-1) {
           x instanceof Array ? t[keys[i]].push(val) : (t[keys[i]]=asArray?[val]:val)
         }
         else {
-            x instanceof Array ? ( t = x ) : (t = t[keys[i]] = (x == null ? {} : x))          
+            x instanceof Array ? ( t = x ) : (t = t[keys[i]] = (x == null ? {} : x))
         }
-        
+
 	}
 }
