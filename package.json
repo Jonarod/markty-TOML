@@ -1,7 +1,7 @@
 {
   "name": "markty-toml",
   "description": "Nano TOML parser for Javascript.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "main": "dist/marktytoml.js",
   "module": "dist/marktytoml.es.js",
   "jsnext:main": "dist/marktytoml.es.js",

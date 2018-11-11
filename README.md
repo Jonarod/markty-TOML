@@ -43,13 +43,13 @@ console.log( toml(someTOML) )
 Find latest version [here](https://unpkg.com/markty-toml).
 
 To get the `umd` version:
-1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.0.6`.
-2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.0.6/dist/martytoml.umd.js`
+1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.0.8`.
+2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.0.8/dist/martytoml.umd.js`
 
 Then just import it normally :
 
 ```html
-<script type="text/javascript" src="https://unpkg.com/markty-toml@0.0.6/dist/martytoml.umd.js"></script>
+<script type="text/javascript" src="https://unpkg.com/markty-toml@0.0.8/dist/martytoml.umd.js"></script>
 ```
 Then the exported name is `marktytoml()`, so you can just:
 

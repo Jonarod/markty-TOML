@@ -1,6 +1,7 @@
 /*eslint no-unused-vars: 1*/
 import markty from 'markty'
 
+
 export default function marktytoml (TOML) {
     let tomlBlocks = '^\\s*\\[(\\[)?(.*?)\\]\\]?(?= *$)((?:[\\w\\W](?!^\\s*\\[))*)'
     let matchThis = new RegExp(`${tomlBlocks}`, 'gm')
@@ -23,7 +24,7 @@ export default function marktytoml (TOML) {
 
     })
 
-    return json
+    return  JSON.parse(JSON.stringify(json, replacer), reviver)
 }
 
 function parseBody (TOML) {
@@ -73,14 +74,14 @@ function parseBody (TOML) {
     return json
 }
 
-function sanitizeSpaces(str){
+export function sanitizeSpaces(str) {
     str = str.trim()
     str = (str.substr(0,1) === '"' && str.substr(-1) === '"') ? str.slice(1,-1) : str
     return str
 }
 
-function setWithPath(obj, keys, val, asArray) {
-	// asArray = asArray ? true : false
+export function setWithPath(obj, keys, val, asArray) {
+	asArray = asArray ? true : false
     keys.split && (keys=keys.split('.'))
 	var i=0, l=keys.length, t=obj, x
 	for (; i < l; ++i) {
@@ -88,11 +89,26 @@ function setWithPath(obj, keys, val, asArray) {
         if (t instanceof Array){x = t[t.length-1]; i--} else { x = t[keys[i]] }
 
         if (i === l-1) {
-          x instanceof Array ? t[keys[i]].push(val) : (t[keys[i]]=asArray?[val]:val)
+            x instanceof Array ? t[keys[i]].push(val) : (t[keys[i]]=asArray?[val]:val)
         }
         else {
             x instanceof Array ? ( t = x ) : (t = t[keys[i]] = (x == null ? {} : x))
         }
 
 	}
+}
+
+
+let replacer = function(k,v){    
+    if (v !== v) { return '___$$$NaN$$$___' }
+    if (v === Infinity) { return '___$$$Infinity$$$___' }
+    if (v === -Infinity) { return '___$$$-Infinity$$$___' }
+    return v
+}
+
+let reviver = function(k,v){
+    if (v === '___$$$NaN$$$___') { return NaN }
+    if (v === '___$$$Infinity$$$___') { return Infinity }
+    if (v === '___$$$-Infinity$$$___') { return -Infinity }
+    return v
 }

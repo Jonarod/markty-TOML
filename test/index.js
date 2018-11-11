@@ -188,23 +188,23 @@ describe('marktyTOML()', () => {
             expect(marktyTOML(input)).to.deep.equal(output)
         })
 
-				it('single line comments', () => {
-						var input = `
-						key1 = val1
-						# This is a comment
-						#This is a comment
-						# [comment]
-						[test]
-						#[comment]
-						key2 = val2
-						# this = comment
-						#this = comment
-						   #this = comment
-						key3 = val3`
+        it('single line comments', () => {
+                var input = `
+                key1 = val1
+                # This is a comment
+                #This is a comment
+                # [comment]
+                [test]
+                #[comment]
+                key2 = val2
+                # this = comment
+                #this = comment
+                    #this = comment
+                key3 = val3`
 
-						var output = {"key1":"val1", "test":{"key2":"val2", "key3":"val3"}}
-						expect(marktyTOML(input)).to.deep.equal(output)
-				})
+                var output = {"key1":"val1", "test":{"key2":"val2", "key3":"val3"}}
+                expect(marktyTOML(input)).to.deep.equal(output)
+        })
 
 
         // it('parses arrays UNquoted strings', () => {
@@ -314,6 +314,7 @@ describe('marktyTOML()', () => {
             }
             expect(marktyTOML(input)).to.deep.equal(output)
         })
+ 
         it('Handles official array of tables examples', () => {
             var input = `
             [[fruit]]
@@ -357,8 +358,10 @@ describe('marktyTOML()', () => {
                 ]
             }
 
-            expect(JSON.stringify(marktyTOML(input))).to.deep.equal(JSON.stringify(output))
+            expect(marktyTOML(input)).to.deep.equal(output)
         })
+
+
         it('More complete examples 1', () => {
             var input = `
             title = "TOML Example"
@@ -420,41 +423,48 @@ describe('marktyTOML()', () => {
             expect(marktyTOML(input)).to.deep.equal(output)
         })
     })
-        // describe('Append to Object', () => {
+
+    // describe('Append to Object', () => {
     //     it('appends in empty', () => {
     //         var pathKey = "hello"
     //         var value = "world"
     //         var tree = {}
     //         var output = {"hello": "world"}
-    //         expect(setWithPath(pathKey, value, tree)).to.deep.equal(output)
+    //         setWithPath(tree, pathKey, value, false)
+    //         console.log(tree)
+    //         expect(tree).to.deep.equal(output)
     //     })
     //     it('appends in existing tree', () => {
     //         var pathKey = "hello"
     //         var value = "world"
     //         var tree = {"nano":"micro"}
     //         var output = {"nano":"micro", "hello": "world"}
-    //         expect(setWithPath(pathKey, value, tree)).to.deep.equal(output)
+    //         setWithPath(tree, pathKey, value, false)
+    //         expect(tree).to.deep.equal(output)
     //     })
     //     it('appends nested', () => {
     //         var pathKey = "nano.hello"
     //         var value = "world"
     //         var tree = {"nano":"micro"}
     //         var output = {"nano":{"hello": "world"}}
-    //         expect(setWithPath(pathKey, value, tree)).to.deep.equal(output)
+    //         setWithPath(tree, pathKey, value, false)
+    //         expect(tree).to.deep.equal(output)
     //     })
     //     it('adds entry aside if key exists', () => {
     //         var pathKey = "nano.hello"
     //         var value = "world"
     //         var tree = {"nano":{"serve":"peacock"}}
     //         var output = {"nano":{"serve":"peacock", "hello":"world"}}
-    //         expect(setWithPath(pathKey, value, tree)).to.deep.equal(output)
+    //         setWithPath(tree, pathKey, value, false)
+    //         expect(tree).to.deep.equal(output)
     //     })
     //     it('long nesting', () => {
     //         var pathKey = "this.key.is.very.very.hidden.down.the.tree"
     //         var value = "added !"
     //         var tree = {}
     //         var output = {"this":{"key":{"is":{"very":{"very":{"hidden":{"down":{"the":{"tree":"added !"}}}}}}}}}
-    //         expect(setWithPath(pathKey, value, tree)).to.deep.equal(output)
+    //         setWithPath(tree, pathKey, value, false)
+    //         expect(tree).to.deep.equal(output)
     //     })
     // })
 
