@@ -74,13 +74,13 @@ function parseBody (TOML) {
     return json
 }
 
-export function sanitizeSpaces(str) {
+function sanitizeSpaces(str) {
     str = str.trim()
     str = (str.substr(0,1) === '"' && str.substr(-1) === '"') ? str.slice(1,-1) : str
     return str
 }
 
-export function setWithPath(obj, keys, val, asArray) {
+function setWithPath(obj, keys, val, asArray) {
 	asArray = asArray ? true : false
     keys.split && (keys=keys.split('.'))
 	var i=0, l=keys.length, t=obj, x
