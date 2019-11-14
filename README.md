@@ -1,5 +1,4 @@
 ![npm](https://img.shields.io/npm/dt/markty-toml.svg?label=npm%20downloads&style=flat-square)
-
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/markty-toml.svg?label=gzipped%20size&style=flat-square)
 
 
@@ -49,13 +48,13 @@ console.log( toml(someTOML) )
 Find latest version [here](https://unpkg.com/markty-toml).
 
 To get the `umd` version:
-1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.1.0`.
-2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.1.0/dist/martytoml.umd.js`
+1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.1.1`.
+2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.1.1/dist/martytoml.umd.js`
 
 Then just import it normally :
 
 ```html
-<script type="text/javascript" src="https://unpkg.com/markty-toml@0.1.0/dist/martytoml.umd.js"></script>
+<script type="text/javascript" src="https://unpkg.com/markty-toml@0.1.1/dist/martytoml.umd.js"></script>
 ```
 Then the exported name is `marktytoml()`, so you can just:
 
@@ -79,7 +78,7 @@ console.log( marktytoml(someTOML) )
 ```
 
 ## FEATURES
-- :microscope: **Ridiculously SMALL:**: 120 LOC, 1kb gzipped
+- :microscope: **Ridiculously SMALL:**: 100 LOC, 1kb gzipped
 - :zap: Blazing fast  :zap: see **benchmarks**
 - **Use any of colon or equal sign:** `key : value` works the same as `key = value`
 - **Single-line comments:** `# this = comment`
@@ -161,15 +160,15 @@ This will correctly parse to :
 | gzipped size |      |  **1.086 b** |        9.000 b |
 | v0.5 compliant ? |  | :heavy_multiplication_x: | **:heavy_check_mark:** |
 | **Parsing tests:**                                 |
-| [simple_kv][5] | [link to bench][2] | **116,630 ops/s** | 8,134 ops/s |
-| [simple_block][6] | [link to bench][3] | **73,593 ops/s** | 2,838 ops/s |
-| [classic_config][7] | [link to bench][4] | **10,447 ops/s** | 233 ops/s |
+| [simple_kv][5] | [link to bench][2] | **148,008 ops/s** | 15,991 ops/s |
+| [simple_block][6] | [link to bench][3] | **140.563 ops/s** | 13.311 ops/s |
+| [classic_config][7] | [link to bench][4] | **19.358 ops/s** | 395 ops/s |
 
 
 [1]: https://github.com/BinaryMuse/toml-node
-[2]: https://jsbench.me/96jd9g78vn/2
-[3]: https://jsbench.me/cujd9gya1l/1
-[4]: https://jsbench.me/txjd9h2y7d/2
+[2]: https://www.measurethat.net/Benchmarks/ShowResult/82471
+[3]: https://www.measurethat.net/Benchmarks/ShowResult/82469
+[4]: https://www.measurethat.net/Benchmarks/ShowResult/82468
 [5]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_kv.toml
 [6]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_block.toml
 [7]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/classic_config.toml
