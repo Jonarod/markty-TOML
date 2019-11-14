@@ -49,11 +49,11 @@ describe('marktyTOML()', () => {
             var output = {"abc": "baby you and me giiiiiirl"}
             expect(marktyTOML(input)).to.deep.equal(output)
         })
-				it('single line comments', () => {
-						var input = '# This is a comment'
-						var output = {}
-						expect(marktyTOML(input)).to.deep.equal(output)
-				})
+        it('single line comments', () => {
+                var input = '# This is a comment'
+                var output = {}
+                expect(marktyTOML(input)).to.deep.equal(output)
+        })
     })
     describe('Data types', () => {
         it('parses string with double quotes', () => {
@@ -214,7 +214,7 @@ describe('marktyTOML()', () => {
         // })
     })
 	describe('Intermediary', () => {
-        it('Handles multiples lines', () => {
+        it('Handles multiples keys', () => {
             var input = `line1 = I am line 1
                          line2 = I am line 2
 
@@ -288,6 +288,69 @@ describe('marktyTOML()', () => {
                 line4 = I am line 4
                 `
             var output = {"line1": "I am line 1", "line2": "I am line 2", "this":{"line3":"I am line 3", "is":{"nested":{"line4":"I am line 4"}}}}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+        it('Handles multiples lines', () => {
+            var input = `key = "This is line 1
+This is line 2"`
+            var output = {"key": "This is line 1\nThis is line 2"}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+
+        it('Handles string literal', () => {
+            var input = `lines = '''
+The first newline is
+trimmed in raw strings.
+   All other whitespace
+   is preserved.
+'''`
+            var output = {"lines": '\nThe first newline is\ntrimmed in raw strings.\n   All other whitespace\n   is preserved.\n'}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+
+        it('Handles quotes in string literal', () => {
+            var input = `dialogue = '''
+He said: "hello ?"
+'''`
+            var output = {"dialogue": '\nHe said: "hello ?"\n'}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+
+        it('String literal avoids [] in middle of string', () => {
+            var input = `dialogue = '''[Kate]: "hello ?" [Jack]: "hey !"'''`
+            var output = {"dialogue": '[Kate]: "hello ?" [Jack]: "hey !"'}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+
+        it('String literal avoids [] if placed at begining', () => {
+            var input = `dialogue = '''
+[Kate]: "hello ?"
+   [Jack]: "hey !"
+\t[Sawyer]: "heeey yaa !"
+'''`
+            var output = {"dialogue": '\n[Kate]: "hello ?"\n   [Jack]: "hey !"\n\t[Sawyer]: "heeey yaa !"\n'}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+
+        it('Handles special characters in string literal', () => {
+            var input = "regex = '''I [dw]on't need \\d{2} apples'''"
+            var output = {"regex": "I [dw]on't need \\d{2} apples"}
+            expect(marktyTOML(input)).to.deep.equal(output)
+        })
+
+        it('Official TOML String Literals', () => {
+            var input = `
+winpath  = '''C:\\Users\\nodejs\\templates'''
+winpath2 = '''\\\\ServerX\\admin$\\system32\\'''
+quoted   = '''Tom \"Dubs\" Preston-Werner'''
+regex    = '''<\\i\\c*\\s*>'''
+`
+            var output = {
+                "winpath": "C:\\Users\\nodejs\\templates",
+                "winpath2": "\\\\ServerX\\admin$\\system32\\",
+                "quoted": "Tom \"Dubs\" Preston-Werner",
+                "regex": "<\\i\\c*\\s*>"
+            }
             expect(marktyTOML(input)).to.deep.equal(output)
         })
     })

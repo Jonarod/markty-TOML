@@ -1,8 +1,14 @@
-:microscope: Nano implementation of [TOML](https://github.com/toml-lang/toml) using [Markty](https://github.com/Jonarod/markty).
+![npm](https://img.shields.io/npm/dt/markty-toml.svg?label=npm%20downloads&style=flat-square)
+
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/markty-toml.svg?label=gzipped%20size&style=flat-square)
+
+
+
+:microscope: Nano implementation of [TOML](https://github.com/toml-lang/toml) using [Markty](https://github.com/Jonarod/markty). 10x faster, 10x smaller :)
 
 # Demo
 
-:eyes: **[Try the live converter here](https://jsfiddle.net/sL9ssuch/13/)** :eyes:
+:eyes: **[Try the live converter here](https://jsfiddle.net/sL9ssuch/14/)** :eyes:
 
 
 # Quick start
@@ -43,13 +49,13 @@ console.log( toml(someTOML) )
 Find latest version [here](https://unpkg.com/markty-toml).
 
 To get the `umd` version:
-1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.0.9`.
-2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.0.9/dist/martytoml.umd.js`
+1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.1.0`.
+2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.1.0/dist/martytoml.umd.js`
 
 Then just import it normally :
 
 ```html
-<script type="text/javascript" src="https://unpkg.com/markty-toml@0.0.9/dist/martytoml.umd.js"></script>
+<script type="text/javascript" src="https://unpkg.com/markty-toml@0.1.0/dist/martytoml.umd.js"></script>
 ```
 Then the exported name is `marktytoml()`, so you can just:
 
@@ -73,11 +79,12 @@ console.log( marktytoml(someTOML) )
 ```
 
 ## FEATURES
-- :microscope: **Ridiculously SMALL:**: 100 LOC, 800 bytes gzipped
+- :microscope: **Ridiculously SMALL:**: 120 LOC, 1kb gzipped
 - :zap: Blazing fast  :zap: see **benchmarks**
 - **Use any of colon or equal sign:** `key : value` works the same as `key = value`
 - **Single-line comments:** `# this = comment`
 - **Single-line text withOUT double-quotes:** `key = single line without double-quotes allowed`
+- **String literals:** `winpath = '''C:\\Users\\nodejs\\templates'''`
 - **Multi-line text with double-quotes:** `key = "Multilined paragraphs with line breaks like this \n\n\n should be enclosed with double-quotes"`
 - **Basic native data types** (should not be enclosed by double-quotes):
     - [x] strings like `hello world`
@@ -137,22 +144,22 @@ This will correctly parse to :
 }
 ```
 
-## NOTES
-- :baby: Even though a lot of [tests](https://github.com/Jonarod/markty-TOML/tree/master/test/index.js) have been implemented, this project is still at baby stage, and has not been battle tested in production.
-- Not TOML v0.4 compliant **and not meant to be**. For instance, here are UNsupported specs:
+## When should you use marktyTOML over other libs (or when you should NOT)
+- :baby: Even though a lot of [tests](https://github.com/Jonarod/markty-TOML/tree/master/test/index.js) have been implemented, I will be slow to patch issues if any... so check if your use case match the tests before anything.
+- Not TOML v0.5 compliant **and not meant to be**. For instance, here are UNsupported specs:
     - There is no errors mechanism to print from.
-    - Handling colons `:` as key/value separator is not allowed in TOML v0.4 (only `=` supported)
-    - Handling strings without `"` is not allowed in TOML v0.4 (strings must be enclosed by `"`)
+    - Handling colons `:` as key/value separator is not allowed in TOML v0.5 (only `=` supported)
+    - Handling strings without `"` is not allowed in TOML v0.5 (strings must be enclosed by `"`)
 - `markty-TOML` considers any TOML source like a **database log**:
     - when two identical nodes are set, the last one **REPLACES** the first: TOML sources are treated like a list of updates which AFTER PARSING returns a final state. This clearly goes against official TOML specs which aims to parse a given source as a **final database state**: thus two identical nodes would throw an error for the whole source.
 
 
 # Benchmarks
 
-| Test | Observations | markty-TOML | [node-toml][1] |
-|:-----|:-------------|------------:|---------------:|
-| gzipped size |      |   **800 b** |        9.000 b |
-| v0.4 compliant ? |  | :heavy_multiplication_x: | **:heavy_check_mark:** |
+| Test | Observations |  markty-TOML | [node-toml][1] |
+|:-----|:-------------|-------------:|---------------:|
+| gzipped size |      |  **1.086 b** |        9.000 b |
+| v0.5 compliant ? |  | :heavy_multiplication_x: | **:heavy_check_mark:** |
 | **Parsing tests:**                                 |
 | [simple_kv][5] | [link to bench][2] | **116,630 ops/s** | 8,134 ops/s |
 | [simple_block][6] | [link to bench][3] | **73,593 ops/s** | 2,838 ops/s |
