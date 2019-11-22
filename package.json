@@ -1,11 +1,11 @@
 {
-  "name": "markty-toml",
-  "description": "Nano TOML parser for Javascript.",
-  "version": "0.1.1",
-  "main": "dist/marktytoml.js",
-  "module": "dist/marktytoml.es.js",
-  "jsnext:main": "dist/marktytoml.es.js",
-  "umd:main": "dist/marktytoml.umd.js",
+  "name": "encryptio",
+  "description": "Lightweight, secure and straightforward encryption & decryption for Node.js: 30 LOC, ",
+  "version": "0.0.1",
+  "main": "dist/encryptio.js",
+  "module": "dist/encryptio.es.js",
+  "jsnext:main": "dist/encryptio.es.js",
+  "umd:main": "dist/encryptio.umd.js",
   "scripts": {
     "build": "npm-run-all --silent clean rollup -p minify:* -s size",
     "clean": "rimraf dist && mkdirp dist",
@@ -13,7 +13,7 @@
     "minify:cjs": "uglifyjs $npm_package_main -cm toplevel -o $npm_package_main -p relative --in-source-map ${npm_package_main}.map --source-map ${npm_package_main}.map",
     "minify:umd": "uglifyjs $npm_package_umd_main -cm -o $npm_package_umd_main -p relative --in-source-map ${npm_package_umd_main}.map --source-map ${npm_package_umd_main}.map",
     "size": "echo \"Gzipped Size: $(strip-json-comments --no-whitespace $npm_package_main | gzip-size --raw)\"",
-    "test": "eslint src test && mocha --compilers babel-register",
+    "test": "eslint src test && mocha --require babel-register",
     "prepublish": "npm run -s build",
     "release": "npm run -s build && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
   },
@@ -24,20 +24,25 @@
     "src",
     "dist"
   ],
-  "homepage": "https://github.com/Jonarod/markty-TOML",
+  "homepage": "https://github.com/Jonarod/encryptio",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jonarod/markty-TOML.git"
+    "url": "git+https://github.com/Jonarod/encryptio.git"
   },
   "license": "MIT",
   "keywords": [
-    "toml",
-    "parser",
+    "crypto",
+    "encryption",
+    "decryption",
+    "encrypt",
+    "decrypt",
+    "cryptography",
+    "AES",
+    "tiny",
+    "lightweight",
     "javascript"
   ],
-  "dependencies": {
-    "markty": "0.0.4"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
@@ -56,7 +61,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-uglify": "^6.0.3",
     "strip-json-comments-cli": "^1.0.1",
-    "uglify-js": "^3.6.9"
+    "uglify-js": "^2.8.29"
   },
   "eslintConfig": {
     "parser": "babel-eslint",
@@ -81,7 +86,7 @@
     }
   },
   "bugs": {
-    "url": "https://github.com/Jonarod/markty-TOML/issues"
+    "url": "https://github.com/Jonarod/encryptio/issues"
   },
   "directories": {
     "test": "test"

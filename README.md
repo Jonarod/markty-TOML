@@ -1,174 +1,228 @@
-![npm](https://img.shields.io/npm/dt/markty-toml.svg?label=npm%20downloads&style=flat-square)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/markty-toml.svg?label=gzipped%20size&style=flat-square)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/encryptio.svg?label=gzipped%20size&style=flat-square)
 
+Simple, yet secure, encryption / decryption using Javascript.
 
-
-:microscope: Nano implementation of [TOML](https://github.com/toml-lang/toml) using [Markty](https://github.com/Jonarod/markty). 10x faster, 10x smaller :)
-
-# Demo
-
-:eyes: **[Try the live converter here](https://jsfiddle.net/Jonarod/vrxcf31t/)** :eyes:
+- **ZERO dependencies:** uses `crypto` which natively ships with Node.js without any further install
+- **Random:** Encrypted strings are always different *( using Initialization Vector )*
+- **Asynchronous:** Promise-based, usable using either `.then()` or `async/await`
+- **Options:** support manual algorithms and encodings (see the `Options` section)
 
 
 # Quick start
 
-#### For Node
+`npm install encryptio`
 
-`npm install markty-toml`
+
+#### Using `.then()`:
 
 ```js
-var toml = require('markty-toml')
+var Encryptio = require('encryptio')
 // or using ES6:
-import toml from 'markty-toml'
+import Encryptio from 'encryptio'
 
-const someTOML = `
-key = "value"
+var my_secret = process.env.SECRET_KEY // See note on "storing the secret key"
+var safe = new Encryptio(my_secret); // secret_key should be 32 characters for AES256
 
-[deeply.nested.key]
-secret = "Shhhhh"
-`
+var text = 'Hello World'
 
-console.log( toml(someTOML) )
+console.log('Original string: ', text)
 
-// > prints:
-// {
-//     "key" : "value",
-//     "deeply": {
-//         "nested": {
-//             "key": {
-//                 "secret" : "Shhhhh"
-//             }
-//         }
-//     }
-// }
-```
+safe.encrypt(text).then( encText => {
+    console.log('Encrypted string: ', encText)
 
-#### In-Browser
-
-Find latest version [here](https://unpkg.com/markty-toml).
-
-To get the `umd` version:
-1. Observe the URL [here](https://unpkg.com/markty-toml) and see the latest version used after `@` like `@0.1.1`.
-2. Just modify the URL to get something like this: `https://unpkg.com/markty-toml@0.1.1/dist/martytoml.umd.js`
-
-Then just import it normally :
-
-```html
-<script type="text/javascript" src="https://unpkg.com/markty-toml@0.1.1/dist/martytoml.umd.js"></script>
-```
-Then the exported name is `marktytoml()`, so you can just:
-
-```js
-<script>
-var someTOML = 'key = "value"\n[deeply.nested.key]\nsecret = "Shhhhh"';
-console.log( marktytoml(someTOML) )
-</script>
+    safe.decrypt(enText).then( decText => {
+        console.log('Decrypted string: ', decText)
+    })
+})
 
 // > prints:
-// {
-//     "key" : "value",
-//     "deeply": {
-//         "nested": {
-//             "key": {
-//                 "secret" : "Shhhhh"
-//             }
-//         }
-//     }
-// }
+// Original string: Hello World
+// Encrypted string: 6jIW7HfpEaarSm0B/o4qDw==:ch9KL0HyTlASypHQfm/XUg==
+// Decrypted string: Hello World
 ```
 
-## FEATURES
-- :microscope: **Ridiculously SMALL:**: 100 LOC, 1kb gzipped
-- :zap: Blazing fast  :zap: see **benchmarks**
-- **Use any of colon or equal sign:** `key : value` works the same as `key = value`
-- **Single-line comments:** `# this = comment`
-- **Single-line text withOUT double-quotes:** `key = single line without double-quotes allowed`
-- **String literals:** `winpath = '''C:\\Users\\nodejs\\templates'''`
-- **Multi-line text with double-quotes:** `key = "Multilined paragraphs with line breaks like this \n\n\n should be enclosed with double-quotes"`
-- **Basic native data types** (should not be enclosed by double-quotes):
-    - [x] strings like `hello world`
-    - [x] integers like `1`, `2`, `3`...
-    - [x] float like `3.14`
-    - [x] boolean like `true`, `false`
-    - [x] signed numbers like `+27`, `-23`
-    - [x] infinity like `+inf`, `inf`, `-inf`
-    - [x] hexadecimals like `0xDEADBEEF`
-    - [x] octals like `0o01234567`, `0o755`
-    - [x] binaries like `0b11010110`
-    - [x] dates like `1979-05-27T00:32:00-07:00`, `1979-05-27`
-- **Complex objects objects** as value:
-    - [x] array of values like `stuff = ["one", "two", "three"]`
-    - [x] array of arrays like `stuff = [[1,2], ["a","b"]]`
-    - [x] inline tables like `stuff = {"key" : "value"}`
-
-- **Tables:**
-    ```
-    [sub.sub]
-    key = value
-    ```
-- **Array of tables:**
-    ```
-    [[sub.sub]]
-    key = value1
-
-    [[sub.sub]]
-    key = value2
-    ```
-- **Spaced keys** when surrounded by double quotes like `"spaced key here" = value`
-
-# Example
-
-```
-string = hello I do NOT need double quotes
-
-array = ["I", "still", "need", "double-quotes", "except for", 1, true, 3.14, ":)"]
-
-other : hey look ! I can have a colon instead of an equal sign
-
-sentence = "this is a long sentence
-with line breaks
-one here
-and another here
-so I need double quotes"
-```
-
-This will correctly parse to :
+#### Using `async/await`:
 
 ```js
-{
-    "string" : "hello I do NOT need double quotes",
-    "array" : ["I", "still", "need", "double-quotes", "except for", 1, true, 3.14, ":)"],
-    "other" : "hey look ! I can have a colon instead of an equal sign",
-    "sentence": "this is a long sentence\nwith line breaks\none here\nand another here\nso I need double quotes"
+var Encryptio = require('encryptio')
+// or using ES6:
+import Encryptio from 'encryptio'
+
+var my_secret = process.env.SECRET_KEY // See note on "storing the secret key"
+var safe = new Encryptio(my_secret); // secret_key should be 32 characters for AES256
+
+var main = async function(){
+    var text = 'Hello World'
+    console.log('Original string: ', text)
+
+    var encText = await safe.encrypt(text)
+    console.log('Encrypted string: ', encText)
+
+    var decText = await safe.encrypt(encText)
+    console.log('Encrypted string: ', decText)
 }
+
+main()
+
+// > prints:
+// Original string: Hello World
+// Encrypted string: 6jIW7HfpEaarSm0B/o4qDw==:ch9KL0HyTlASypHQfm/XUg==
+// Decrypted string: Hello World
 ```
 
-## When should you use marktyTOML over other libs (or when you should NOT)
-- :baby: Even though a lot of [tests](https://github.com/Jonarod/markty-TOML/tree/master/test/index.js) have been implemented, I will be slow to patch issues if any... so check if your use case match the tests before anything.
-- Not TOML v0.5 compliant **and not meant to be**. For instance, here are UNsupported specs:
-    - There is no errors mechanism to print from.
-    - Handling colons `:` as key/value separator is not allowed in TOML v0.5 (only `=` supported)
-    - Handling strings without `"` is not allowed in TOML v0.5 (strings must be enclosed by `"`)
-- `markty-TOML` considers any TOML source like a **database log**:
-    - when two identical nodes are set, the last one **REPLACES** the first: TOML sources are treated like a list of updates which AFTER PARSING returns a final state. This clearly goes against official TOML specs which aims to parse a given source as a **final database state**: thus two identical nodes would throw an error for the whole source.
+
+# Options
+
+By default, `encryptio` uses `aes_256_cbc` algorithm to encrypt strings and `base64` to encode them.
+
+Both options are manually configurable. Just pass an object to the `Encryptio` constructor, like so:
+
+```js
+var custom_options = {
+    algorithm: 'aes256',
+    encoding: 'hex'
+}
+
+var safe = new Encryptio(process.env.SECRET_KEY, custom_options);
+```
+
+Here are some options:
+
+##### algorithm
+
+- `aes-256-cbc` **(default)** : requires a 32 byte secret key
+- `aes256` : requires a 32 byte secret key
+- `aes-192-cbc` : requires a 24 byte secret key
+- `aes192` : requires a 24 byte secret key
+- `aes-128-cbc` : requires a 16 byte secret key
+- `aes128` : requires a 16 byte secret key
+
+##### encoding
+
+- `base64` **(default)**
+- `hex`
+- `binary`
 
 
-# Benchmarks
+# Note on storing the secret key
 
-| Test | Observations |  markty-TOML | [node-toml][1] |
-|:-----|:-------------|-------------:|---------------:|
-| gzipped size |      |  **1.086 b** |        9.000 b |
-| v0.5 compliant ? |  | :heavy_multiplication_x: | **:heavy_check_mark:** |
-| **Parsing tests:**                                 |
-| [simple_kv][5] | [link to bench][2] | **148,008 ops/s** | 15,991 ops/s |
-| [simple_block][6] | [link to bench][3] | **140.563 ops/s** | 13.311 ops/s |
-| [classic_config][7] | [link to bench][4] | **19.358 ops/s** | 395 ops/s |
+**!! NEVER PUT YOUR SECRET KEY IN YOUR CODE !!**
+
+**!! NEVER PUT YOUR SECRET KEY IN YOUR CODE !!**
+
+**!! NEVER PUT YOUR SECRET KEY IN YOUR CODE !!**
 
 
-[1]: https://github.com/BinaryMuse/toml-node
-[2]: https://www.measurethat.net/Benchmarks/ShowResult/82471
-[3]: https://www.measurethat.net/Benchmarks/ShowResult/82469
-[4]: https://www.measurethat.net/Benchmarks/ShowResult/82468
-[5]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_kv.toml
-[6]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/simple_block.toml
-[7]: https://github.com/Jonarod/markty-TOML/tree/master/benchmarks/classic_config.toml
+> It is strongly recommended to store any private key or secret localy (on a secured machine...) and never send these to the cloud or even to git or even to team mates. Here are 3 recommended ways to store them:
+
+
+### Quick and dirty
+
+Export a variable in your terminal before `node`:
+
+```bash
+SECRET_KEY=1234567890098765432112 node index.js
+```
+Then in your code (here `index.js` as an example), you can call your variable like this:
+
+```js
+// index.js
+// ...
+var my_secret = process.env.SECRET_KEY
+// ...
+```
+
+### Using `direnv` (recommended)
+
+[direnv](https://direnv.net/) solves this problem quite nicely. First you install `direnv` (just go and follow the steps in `direnv` docs). Then, at the root of your project, you can create a file named `.envrc` and put your secrets like so:
+
+```bash
+# in your .envrc
+export SECRET_KEY=1234567890098765432112
+```
+
+Then in your code (here `index.js` as an example), you can call your variable like this:
+
+```js
+// in your index.js
+// ...
+var my_secret = process.env.SECRET_KEY
+// ...
+```
+
+**CAUTION:** Please, make **100% sure** that your `.envrc` is never sent to git or anywhere. It should just be kept secret in your machine. So, do not forget to update your `.gitignore` file accordingly:
+
+```bash
+# in your .gitignore
+# exclude direnv file
+.envrc
+```
+
+### Using `dotenv`
+
+[dotenv](https://github.com/motdotla/dotenv) does somewhat the same thing as `direnv` but has to be explicitly added to your code.
+
+First create a `.env` file at the root of your project:
+
+```
+SECRET_KEY=1234567890098765432112
+```
+
+then install `dotenv`
+
+`npm i dotenv --save`
+
+finally in your code, import `dotenv`, and get your vars:
+
+```js
+// in your index.js
+require('dotenv').config()
+
+var my_secret = process.env.SECRET_KEY
+```
+
+**CAUTION:** Please, make **100% sure** that your `.env` is never sent to git or anywhere. It should just be kept secret in your machine. So, do not forget to update your `.gitignore` file accordingly:
+
+```bash
+# in your .gitignore
+# exclude dotenv file
+.env
+```
+
+
+# How secure is this ?
+
+##### DOs
+
+You can safely use the lib to encrypt low to highly confidential things.
+
+**!! USE A REALLY RANDOM SECRET KEY !!**
+
+Just to recap, here are some common things adressed:
+
+- This is `AES-256-CBC` by default. One cool thing about it is that the encryption is not made by blocks of words but rather given the whole string. So it is not possible to statistically count word/letter frequences against the encrypted string.
+
+- `AES-256-CBC` enforces a 32 bytes long secret key composed of any characters. It would require billions of billions of years to try all possibilities of the secret key. That beinng said, if your secret key is `00000000000000000000000000000000` it may take only 2 minutes... since any brute-force program might just start with zeros, then `12345...` then dictionnaries... So make it crazy random !
+
+- Since `encryptio` uses a random Initilization Vector, several encryption of the same string will always output a new encrypted string. This means that an attacker cannot compare two encrypted strings in the hope to find patterns.
+
+Really, unless you pick a dumb easy secret-key and/or blindly distribute it to the cloud... you should be able to sleep peacefully. It would require a considerable amount of efforts and money to break this encryption.
+
+
+##### DONTs
+
+Let's face it, if you plan to use this lib to encrypt political, highly pricey secrets, or the name of who killed JFK... that may not be a good idea.
+
+Like exposed in the `DOs` section above, this is not a bulletproof solution. The main reason being... YOU. You are more likely to fail keeping the secret key than someone breaking the `AES` encryption. For example, if you choose a weak predictable secret key... brute force can quickly take your secret down.
+
+One common mistake might also be to trust other 3rd parties like team mates, co-workers, or applications that might just also neglect your secret until... some attacker gets it.
+
+Finally, if you store a secret key that gives a $200 billion price... someone might actually put $100 billion to the table to buy sufficient computing power to crack your secret. Who knows?
+
+##### Summary
+
+**!! USE A REALLY RANDOM SECRET KEY !!**
+
+**!! NEVER SHARE IT... LIKE NEVER EVER EVER !!**
+
+...and you'll be cool ;)

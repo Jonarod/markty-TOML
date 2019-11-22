@@ -4,17 +4,32 @@ import resolve from 'rollup-plugin-node-resolve';
 let pkg = require('./package.json');
 
 export default {
-	moduleName: pkg.name.replace(/[-]/, function($1){ return '' }),
-	entry: 'src/index.js',
-	useStrict: false,
-	sourceMap: true,
+	input: 'src/index.js',
+	output: [
+		{
+			format: 'cjs', 
+			file: pkg.main,
+			name:pkg.name.replace(/[-]/, function($1){ return '' }),
+			sourcemap: true,
+			strict: false,
+		},
+		{
+			format: 'es', 
+			file: pkg.module,
+			name:pkg.name.replace(/[-]/, function($1){ return '' }),
+			sourcemap: true,
+			strict: false,
+		},
+		{
+			format: 'umd', 
+			file: pkg['umd:main'],
+			name:pkg.name.replace(/[-]/, function($1){ return '' }),
+			sourcemap: true,
+			strict: false,
+		}
+	],
 	plugins: [
 		resolve(),
 		buble()
-	],
-	targets: [
-		{ format:'cjs', dest: pkg.main },
-		{ format:'es', dest: pkg.module },
-		{ format:'umd', dest: pkg['umd:main'] }
 	]
 };
